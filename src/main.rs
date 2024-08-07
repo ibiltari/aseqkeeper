@@ -45,6 +45,12 @@ Set logging level with RUST_LOG=\"debug\" envvar.")
                .long("disconnect|zero")
                .help("Disconnects everything to start with.")
            )
+        .arg(
+            Arg::with_name("readonly")
+                .short("r")
+                .long("readonly")
+                .help("Run server in read only mode (don't touch connections file).")
+            )
        .get_matches()
 }
 
@@ -234,6 +240,10 @@ fn main() -> Result<(), Box<Error>> {
     if options.occurrences_of("all") > 0 {
         connect_all(&seq)?;
     }
+    if options.occurrences_of("readonly") > 0 {
+        info!("read only mode !!!");
+    } 
+
 
     // These are the connections I want to keep. This is stored between runs.
     let mut connections: Vec<Connection> = load_connections()?;
@@ -256,6 +266,10 @@ fn main() -> Result<(), Box<Error>> {
             let ev = input.event_input()?;
             match ev.get_type() {
                 seq::EventType::PortSubscribed => {
+                    if options.occurrences_of("readonly") > 0 {
+                        info!("read only mode, ignorig susbription");
+                        break;
+                    } 
                     let conn: seq::Connect = ev.get_data().ok_or("Expected connection")?;
 
                     if !is_port_no_export(&seq, &conn.sender) && !is_port_no_export(&seq, &conn.dest){
@@ -275,6 +289,10 @@ fn main() -> Result<(), Box<Error>> {
                     }
                 },
                 seq::EventType::PortUnsubscribed => {
+                    if options.occurrences_of("readonly") > 0 {
+                        info!("read only mode, ignorig unsusciption");
+                        break;
+                    } 
                     let conn: seq::Connect = ev.get_data().ok_or("Expected connection")?;
                     let sender = get_port_name(&seq, conn.sender)?;
                     let dest = get_port_name(&seq, conn.dest)?;
