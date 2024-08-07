@@ -6,7 +6,7 @@ After=alsa-state.target
 Type=simple
 User=nobody
 Group=audio
-ExecStart=/usr/local/bin/aseqkeeper
+ExecStart=/usr/local/bin/aseqkeeper -r
 
 [Install]
 WantedBy=multi-user.target
