@@ -22,8 +22,8 @@ struct Connection{
 
 fn parse_cmdline() -> clap::ArgMatches<'static> {
     App::new("Alsa Seq connection Keeper")
-       .version("0.1.0")
-       .author("David Moreno <dmoreno@coralbits.com>")
+       .version("0.0.12")
+       .author("David Moreno <dmoreno@coralbits.com> & Stagelab")
        .about("Keeps the connections between reboots and disconnects.
 
 When connecting and disconnecting MIDI gear the connections are lost.
